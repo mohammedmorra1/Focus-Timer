@@ -1,14 +1,11 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 const Timer = () => {
   const [timer, setTimer] = useState<boolean>(false);
   const [seconds, setSeconds] = useState<number>(3590);
-  const [minutes, setMinutes] = useState<number>(0);
-  const [hours, setHours] = useState<number>(0);
+  // const [minutes, setMinutes] = useState<number>(0);
+  // const [hours, setHours] = useState<number>(0);
   const [Sid, setSid] = useState<number>();
-  const startTimer = () => {
-    setTimer(true);
-  };
   useEffect(() => {
     if (timer) {
       const id: number = setInterval(() => {
@@ -17,21 +14,33 @@ const Timer = () => {
       console.log("timer started with id: ", id);
       setSid(id);
     }
+    return () => {
+      clearInterval(Sid);
+    };
   }, [timer]);
-  const stopTimer = () => {
+  const startTimer = useCallback(() => {
+    setTimer(true);
+  }, []);
+
+  const stopTimer = useCallback(() => {
     setTimer(false);
     clearInterval(Sid);
-  };
-  const resetTimer = () => {
+  }, [Sid]);
+
+  const resetTimer = useCallback(() => {
     setSeconds(0);
-  };
-  useMemo(() => setMinutes(Math.floor(seconds / 60)), [seconds]);
-  useMemo(() => setHours(Math.floor(seconds / 3600)), [seconds]);
+  }, []);
+  const displaySeconds = seconds % 60;
+  const minutes = Math.floor(seconds / 60) % 60;
+  const hours = Math.floor(seconds / 3600);
+  // useMemo(() => setMinutes(Math.floor(seconds / 60)), [seconds]);
+  // useMemo(() => setHours(Math.floor(seconds / 3600)), [seconds]);
 
   return (
     <div className="flex flex-col items-center justify-center">
       <div>
-        {hours}:{minutes % 60}:{seconds % 60}
+        {String(hours).padStart(2, "0")}:{String(minutes).padStart(2, "0")}:
+        {String(displaySeconds).padStart(2, "0")}
       </div>
       <div className="flex flex-col w-fit items-center justify-center">
         <button className="border w-full" onClick={startTimer}>
