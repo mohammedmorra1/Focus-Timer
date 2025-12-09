@@ -11,8 +11,6 @@ const Player = () => {
     if (audioRef.current) {
       audioRef.current.muted = !muted;
       setMuted(!muted);
-      console.log(audioRef.current.muted);
-      console.log(audioRef.current);
     }
   };
   useEffect(() => {

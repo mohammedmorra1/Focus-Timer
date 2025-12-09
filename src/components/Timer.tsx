@@ -1,15 +1,80 @@
 import { useState, useEffect, useCallback } from "react";
 
+// Timer state interface for storage
+interface TimerState {
+  seconds: number;
+  isRunning: boolean;
+  lastUpdated: number;
+}
+
+// Storage constants
+const TIMER_STORAGE_KEY = "focusTimerState";
+const EXPIRATION_HOURS = 24;
+
+// Storage utility functions
+const saveTimerState = (seconds: number, isRunning: boolean) => {
+  try {
+    const state: TimerState = {
+      seconds,
+      isRunning,
+      lastUpdated: Date.now(),
+    };
+    localStorage.setItem(TIMER_STORAGE_KEY, JSON.stringify(state));
+  } catch (error) {
+    console.error("Error saving timer state:", error);
+  }
+};
+
+const loadTimerState = (): { seconds: number; isRunning: boolean } => {
+  try {
+    const stored = localStorage.getItem(TIMER_STORAGE_KEY);
+    if (!stored) return { seconds: 0, isRunning: false };
+
+    const state = JSON.parse(stored) as TimerState;
+
+    // Check if data is valid
+    if (
+      typeof state.seconds !== "number" ||
+      typeof state.isRunning !== "boolean" ||
+      typeof state.lastUpdated !== "number"
+    ) {
+      localStorage.removeItem(TIMER_STORAGE_KEY);
+      return { seconds: 0, isRunning: false };
+    }
+
+    // Check if expired (24 hours)
+    const now = Date.now();
+    const expirationTime = EXPIRATION_HOURS * 60 * 60 * 1000; // 24 hours in milliseconds
+    if (now - state.lastUpdated > expirationTime) {
+      localStorage.removeItem(TIMER_STORAGE_KEY);
+      return { seconds: 0, isRunning: false };
+    }
+
+    return { seconds: state.seconds, isRunning: state.isRunning };
+  } catch (error) {
+    console.error("Error loading timer state:", error);
+    localStorage.removeItem(TIMER_STORAGE_KEY);
+    return { seconds: 0, isRunning: false };
+  }
+};
+
 const Timer = () => {
-  const [timer, setTimer] = useState<boolean>(false);
-  const [seconds, setSeconds] = useState<number>(0);
+  // Load initial state from localStorage
+  const initialState = loadTimerState();
+  const [timer, setTimer] = useState<boolean>(initialState.isRunning);
+  const [seconds, setSeconds] = useState<number>(initialState.seconds);
   const [Sid, setSid] = useState<number>();
+
+  // Save state to localStorage whenever seconds or timer state changes
+  useEffect(() => {
+    saveTimerState(seconds, timer);
+  }, [seconds, timer]);
+
   useEffect(() => {
     if (timer) {
       const id: number = setInterval(() => {
         setSeconds((seconds) => seconds + 1);
       }, 1000);
-      console.log("timer started with id: ", id);
       setSid(id);
     }
     return () => {
@@ -27,7 +92,16 @@ const Timer = () => {
 
   const resetTimer = useCallback(() => {
     setSeconds(0);
-  }, []);
+    // for some reason calling stopTimer() here doesn't work so i duplicated the code
+    setTimer(false);
+    clearInterval(Sid);
+    // Clear stored state when user manually resets
+    try {
+      localStorage.removeItem(TIMER_STORAGE_KEY);
+    } catch (error) {
+      console.error("Error clearing timer state:", error);
+    }
+  }, [Sid]);
   const displaySeconds = seconds % 60;
   const minutes = Math.floor(seconds / 60) % 60;
   const hours = Math.floor(seconds / 3600);
