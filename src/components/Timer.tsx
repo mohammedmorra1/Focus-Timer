@@ -37,7 +37,7 @@ const Timer = () => {
   // useMemo(() => setHours(Math.floor(seconds / 3600)), [seconds]);
 
   return (
-    <div className="flex flex-col items-center justify-center p-1">
+    <div className="flex flex-col items-center gap-4">
       <div className="md:text-9xl text-7xl timer">
         {String(hours).padStart(2, "0")}:{String(minutes).padStart(2, "0")}:
         {String(displaySeconds).padStart(2, "0")}
