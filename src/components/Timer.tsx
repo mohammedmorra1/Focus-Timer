@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 const Timer = () => {
   const [timer, setTimer] = useState<boolean>(false);
   const [seconds, setSeconds] = useState<number>(0);
-  // const [minutes, setMinutes] = useState<number>(0);
-  // const [hours, setHours] = useState<number>(0);
   const [Sid, setSid] = useState<number>();
   useEffect(() => {
     if (timer) {

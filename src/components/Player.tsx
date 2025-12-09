@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import RecordIcon from "../assets/record.svg";
 import Muted from "../assets/muted.svg";
 import On from "../assets/on.svg";
 import mp3 from "../assets/10.mp3";
 
 const Player = () => {
-  const audioRef = React.useRef<HTMLAudioElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
   const [muted, setMuted] = useState(true);
   const handleMute = () => {
     if (audioRef.current) {
