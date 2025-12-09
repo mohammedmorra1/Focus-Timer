@@ -37,19 +37,19 @@ const Timer = () => {
   // useMemo(() => setHours(Math.floor(seconds / 3600)), [seconds]);
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div>
+    <div className="flex flex-col items-center justify-center p-1">
+      <div className="md:text-9xl text-7xl timer">
         {String(hours).padStart(2, "0")}:{String(minutes).padStart(2, "0")}:
         {String(displaySeconds).padStart(2, "0")}
       </div>
-      <div className="flex flex-col w-fit items-center justify-center">
-        <button className="border w-full" onClick={startTimer}>
+      <div className="flex items-center justify-around w-full">
+        <button className="controlBtn" onClick={startTimer}>
           Start
         </button>
-        <button className="border w-full" onClick={resetTimer}>
+        <button className="controlBtn" onClick={resetTimer}>
           Reset
         </button>
-        <button className="border w-full" onClick={stopTimer}>
+        <button className="controlBtn" onClick={stopTimer}>
           Stop
         </button>
       </div>
