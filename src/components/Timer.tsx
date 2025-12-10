@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 interface TimerState {
   seconds: number;
   isRunning: boolean;
-  lastUpdated: number;
+  createdAt: number; // Fixed timestamp when timer was first created/reset
 }
 
 // Storage constants
@@ -12,12 +12,18 @@ const TIMER_STORAGE_KEY = "focusTimerState";
 const EXPIRATION_HOURS = 24;
 
 // Storage utility functions
-const saveTimerState = (seconds: number, isRunning: boolean) => {
+const saveTimerState = (
+  seconds: number,
+  isRunning: boolean,
+  createdAt?: number
+) => {
   try {
+    // If createdAt is provided, use it (for existing timers), otherwise create new timestamp
+    const timestamp = createdAt || Date.now();
     const state: TimerState = {
       seconds,
       isRunning,
-      lastUpdated: Date.now(),
+      createdAt: timestamp,
     };
     localStorage.setItem(TIMER_STORAGE_KEY, JSON.stringify(state));
   } catch (error) {
@@ -25,10 +31,14 @@ const saveTimerState = (seconds: number, isRunning: boolean) => {
   }
 };
 
-const loadTimerState = (): { seconds: number; isRunning: boolean } => {
+const loadTimerState = (): {
+  seconds: number;
+  isRunning: boolean;
+  createdAt: number;
+} => {
   try {
     const stored = localStorage.getItem(TIMER_STORAGE_KEY);
-    if (!stored) return { seconds: 0, isRunning: false };
+    if (!stored) return { seconds: 0, isRunning: false, createdAt: Date.now() };
 
     const state = JSON.parse(stored) as TimerState;
 
@@ -36,25 +46,29 @@ const loadTimerState = (): { seconds: number; isRunning: boolean } => {
     if (
       typeof state.seconds !== "number" ||
       typeof state.isRunning !== "boolean" ||
-      typeof state.lastUpdated !== "number"
+      typeof state.createdAt !== "number"
     ) {
       localStorage.removeItem(TIMER_STORAGE_KEY);
-      return { seconds: 0, isRunning: false };
+      return { seconds: 0, isRunning: false, createdAt: Date.now() };
     }
 
-    // Check if expired (24 hours)
+    // Check if expired (24 hours from creation)
     const now = Date.now();
     const expirationTime = EXPIRATION_HOURS * 60 * 60 * 1000; // 24 hours in milliseconds
-    if (now - state.lastUpdated > expirationTime) {
+    if (now - state.createdAt > expirationTime) {
       localStorage.removeItem(TIMER_STORAGE_KEY);
-      return { seconds: 0, isRunning: false };
+      return { seconds: 0, isRunning: false, createdAt: Date.now() };
     }
 
-    return { seconds: state.seconds, isRunning: state.isRunning };
+    return {
+      seconds: state.seconds,
+      isRunning: state.isRunning,
+      createdAt: state.createdAt,
+    };
   } catch (error) {
     console.error("Error loading timer state:", error);
     localStorage.removeItem(TIMER_STORAGE_KEY);
-    return { seconds: 0, isRunning: false };
+    return { seconds: 0, isRunning: false, createdAt: Date.now() };
   }
 };
 
@@ -63,12 +77,21 @@ const Timer = () => {
   const initialState = loadTimerState();
   const [timer, setTimer] = useState<boolean>(initialState.isRunning);
   const [seconds, setSeconds] = useState<number>(initialState.seconds);
+  const [createdAt, setCreatedAt] = useState<number>(initialState.createdAt);
   const [Sid, setSid] = useState<number>();
+
+  // Save initial state for new users
+  useEffect(() => {
+    const stored = localStorage.getItem(TIMER_STORAGE_KEY);
+    if (!stored) {
+      saveTimerState(0, false, createdAt);
+    }
+  }, [createdAt]);
 
   // Save state to localStorage whenever seconds or timer state changes
   useEffect(() => {
-    saveTimerState(seconds, timer);
-  }, [seconds, timer]);
+    saveTimerState(seconds, timer, createdAt);
+  }, [seconds, timer, createdAt]);
 
   useEffect(() => {
     if (timer) {
@@ -95,6 +118,9 @@ const Timer = () => {
     // for some reason calling stopTimer() here doesn't work so i duplicated the code
     setTimer(false);
     clearInterval(Sid);
+    // Create a new creation timestamp when resetting
+    const newCreatedAt = Date.now();
+    setCreatedAt(newCreatedAt);
     // Clear stored state when user manually resets
     try {
       localStorage.removeItem(TIMER_STORAGE_KEY);
