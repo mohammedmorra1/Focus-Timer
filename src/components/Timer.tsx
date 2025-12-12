@@ -134,7 +134,6 @@ const Timer = () => {
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      console.log(event.keyCode);
       if (event.keyCode === 32) {
         timer ? stopTimer() : startTimer();
       }
