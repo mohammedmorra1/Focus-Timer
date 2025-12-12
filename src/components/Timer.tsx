@@ -131,8 +131,22 @@ const Timer = () => {
   const displaySeconds = seconds % 60;
   const minutes = Math.floor(seconds / 60) % 60;
   const hours = Math.floor(seconds / 3600);
-  // useMemo(() => setMinutes(Math.floor(seconds / 60)), [seconds]);
-  // useMemo(() => setHours(Math.floor(seconds / 3600)), [seconds]);
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      console.log(event.keyCode);
+      if (event.keyCode === 32) {
+        timer ? stopTimer() : startTimer();
+      }
+    },
+    [timer, startTimer, stopTimer]
+  );
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown]);
 
   return (
     <div className="flex flex-col items-center gap-4">
