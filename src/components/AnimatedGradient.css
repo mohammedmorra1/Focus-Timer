@@ -1,7 +1,7 @@
 .bg-gradient {
-  background: linear-gradient(-45deg, #b7dbea, #f9f6f6, #c3aead, #b27397);
+  background: linear-gradient(-45deg, #b7dbea, #c1b9b9, #c3aead, #d49bbb);
   background-size: 400% 400%;
-  animation: gradient 12s ease infinite;
+  animation: gradient 15s ease infinite;
   height: 100vh;
 }
 
