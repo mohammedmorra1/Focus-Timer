@@ -1,75 +1,107 @@
-# React + TypeScript + Vite
+# Focus Timer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A minimalist web-based focus timer application designed to enhance productivity during work and study sessions. Combines time tracking with ambient audio for an immersive focus experience.
 
-Currently, two official plugins are available:
+![Focus Timer](https://img.shields.io/badge/React-19.2.0-blue) ![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue) ![Vite](https://img.shields.io/badge/Vite-7.2.4-646CFF)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- ⏱️ **Full-featured Timer** with hours:minutes:seconds display
+- 🔄 **Persistent State** - Timer automatically saves and restores across browser sessions (24-hour retention)
+- ⌨️ **Keyboard Controls** - Use spacebar to start/stop timer quickly
+- 🎵 **Ambient Audio Player** - Built-in brown noise with mute/unmute controls
+- 📱 **Responsive Design** - Clean interface that works seamlessly across devices
+- 🌈 **Animated Gradient Background** - Calming visual environment with smooth transitions
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## Getting Started
 
-Note: This will impact Vite dev & build performances.
+### Prerequisites
 
-## Expanding the ESLint configuration
+- Node.js (version 18 or higher)
+- npm or yarn
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Installation
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+1. Clone the repository:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone https://github.com/yourusername/focus-timer.git
+cd focus-timer
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Install dependencies:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
+
+3. Start the development server:
+
+```bash
+npm run dev
+```
+
+4. Open your browser and navigate to `http://localhost:5173`
+
+### Building for Production
+
+```bash
+npm run build
+```
+
+## Usage
+
+1. **Timer Controls**:
+
+   - Click "Start" to begin timing your focus session
+   - Click "Stop" to pause the timer
+   - Click "Reset" to clear the timer and start fresh
+   - Press spacebar for quick start/stop toggle
+
+2. **Audio Controls**:
+
+   - Click the speaker icon to mute/unmute the brown noise
+   - Audio plays automatically in a loop (muted by default)
+
+3. **Data Persistence**:
+   - Your timer state is automatically saved
+   - If you close and reopen the browser within 24 hours, your timer will resume where you left off
+
+## Technology Stack
+
+- **Frontend**: React 19 with TypeScript
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **State Management**: React Hooks with localStorage persistence
+- **Audio**: HTML5 Audio API
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── Timer.tsx          # Main timer component with state management
+│   ├── Player.tsx         # Audio player component
+│   ├── AnimatedGradient.tsx  # Background animation
+│   └── GlobalKeyListener.tsx  # Keyboard event handling
+├── App.tsx                # Main application component
+└── assets/                # Audio files and icons
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- Built with [Vite](https://vitejs.dev/) for fast development
+- Styled with [Tailwind CSS](https://tailwindcss.com/)
+- Icons from [Font Awesome](https://fontawesome.com/)
